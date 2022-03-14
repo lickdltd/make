@@ -4,7 +4,7 @@ TF_VERSION ?= 1.1.6
 TF_DIRECTORY ?= $(PWD)
 TF_WORKSPACE ?= default
 
-TF_DOCKER_CMD = docker run --rm \
+TF_DOCKER_CMD = docker run --rm -it \
 	-w /terraform \
 	-v ~/.aws:/root/.aws:ro \
 	-v ~/.ssh:/root/.ssh:ro \
