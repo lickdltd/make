@@ -1,6 +1,6 @@
 # terraform
 
-TF_VERSION ?= 1.1.6
+TF_VERSION ?= 1.1.7
 TF_DIRECTORY ?= $(PWD)
 TF_WORKSPACE ?= default
 

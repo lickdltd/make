@@ -19,6 +19,9 @@
 
 ### version override
 
+As new versions of Terraform are released, the default version used here will be updated.  
+This is defined by [TF_VERSION](./terraform.mk#L3) in [terraform.mk](./terraform.mk) and can be overriden by doing the following in your project:
+
 ```makefile
 TF_VERSION = 1.0.0
 ```
