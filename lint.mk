@@ -1,6 +1,6 @@
 # lint
 
-LINT_VERSION ?= slim-v4
+LINT_VERSION ?= v4
 LINT_DIRECTORY ?= $(PWD)
 
 LINT_CMD = docker run --rm \

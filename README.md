@@ -62,4 +62,5 @@ init: MAKE_FILES = ansible common
 * [ansible](./docs/ansible.md)
 * [common](./docs/common.md)
 * [encryption](./docs/encryption.md)
+* [lint](./docs/lint.md)
 * [terraform](./docs/terraform.md)
