@@ -59,5 +59,6 @@ init: MAKE_FILES = ansible common
 
 ## further reading
 
+* [ansible](./docs/ansible.md)
 * [common](./docs/common.md)
 * [terraform](./docs/terraform.md)
