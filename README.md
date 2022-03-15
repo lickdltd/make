@@ -1,5 +1,14 @@
 # make
 
+* [purpose](#purpose)
+* [usage](#usage)
+* [further reading](#further-reading)
+
+## purpose
+
+These files are created to replicate CI/CD commands defined in [github-actions](https://github.com/lickdltd/github-actions)
+and are designed to be used purely for local development usage only.
+
 ## usage
 
 ### basic
@@ -30,13 +39,13 @@ The example uses `init` but can be whatever you'd prefer, for example `install` 
 
 ### directory
 
-In the basic usage above, the directory is defined as `./.make` but can be updated to be where is desired as long as `MAKE_DIR` and `-include` match.  
+In the basic usage above, the directory is defined as `./.make` but the important thing is that `MAKE_DIR` and `-include` match.  
 It is also recommended ignoring the directory from your project by adding `.make` in the `.gitignore` file in the root of the project repo.
 
 ### version
 
-These files are versioned and follow [semantic versioning](https://semver.org/).  
-This is achieved with git tags, each patch version is locked and will never change while the minor and major tags will move based on the relevant patch version.  
+These files are versioned and follow [semantic versioning](https://semver.org/) which is achieved with git tags, 
+each patch version is locked and will never change while the minor and major tags will move based on the relevant patch version.  
 It is recommended to lock your `MAKE_VERSION` to the current major version.
 
 ### includes
@@ -47,3 +56,8 @@ To include other files, it can be updated like so:
 ```makefile
 init: MAKE_FILES = ansible common
 ```
+
+## further reading
+
+* [common](./common.md)
+* [terraform](./terraform.md)
