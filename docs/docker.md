@@ -16,8 +16,8 @@
 ### variables
 
 ```makefile
-dkr_%: export DOCKER_IMAGE_URL = 843827012977.dkr.ecr.eu-west-1.amazonaws.com/$(NAME)
-dkr_%: export DOCKER_TAG = $(GIT_TAG)
+export DOCKER_IMAGE_URL = 843827012977.dkr.ecr.eu-west-1.amazonaws.com/$(NAME)
+export DOCKER_TAG = $(GIT_TAG)
 ```
 
 The variable `$(GIT_TAG)` comes from [common.mk](../common.mk) and documented in [common.md](./common.md).
