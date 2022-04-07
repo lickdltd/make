@@ -28,4 +28,6 @@ This will create a log file on execution, it is recommended to add `**/super-lin
 
 ```shell
 make lint
+LINT_REGEX_INCLUDE=path/to/your/directory make lint
+LINT_REGEX_INCLUDE=path/to/your/file make lint
 ```
