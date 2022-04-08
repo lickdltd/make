@@ -14,11 +14,17 @@ DKR_COMPOSE_CMD_UP = $(DKR_COMPOSE_CMD) up --abort-on-container-exit --remove-or
 DKR_COMPOSE_CMD_DOWN = $(DKR_COMPOSE_CMD) down --remove-orphans --volumes $(DKR_COMPOSE_ADDITIONAL)$(DKR_COMPOSE_ADDITIONAL_DOWN)
 DKR_COMPOSE_CMD_PUSH = $(DKR_COMPOSE_CMD) push $(DKR_COMPOSE_ADDITIONAL)$(DKR_COMPOSE_ADDITIONAL_PUSH)
 
+DKR_BUILDX_BAKE_CMD = docker buildx bake
+
 dkr_pull dkr_pull_%:
 	$(DKR_COMPOSE_CMD_PULL)
 
 dkr_build dkr_build_%:
+ifneq ($(shell docker buildx version),)
+	$(DKR_BUILDX_BAKE_CMD)
+else
 	$(DKR_COMPOSE_CMD_BUILD)
+endif
 
 dkr_run dkr_run_%:
 	$(DKR_COMPOSE_CMD_RUN)
