@@ -12,6 +12,7 @@ LINT_CMD = docker run --rm \
 	-e VALIDATE_PHP_PHPSTAN=false \
 	-e VALIDATE_PHP_PSALM=false \
 	-e VALIDATE_TERRAFORM_TFLINT=false \
+	-e VALIDATE_TYPESCRIPT_STANDARD=false \
 	-e FILTER_REGEX_INCLUDE=$(LINT_REGEX_INCLUDE) \
 	-v $(LINT_DIRECTORY):/tmp/lint \
 	github/super-linter:$(LINT_VERSION)
