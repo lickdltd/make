@@ -3,7 +3,7 @@
 ANS_VERSION ?= latest
 ANS_DIRECTORY ?= $(PWD)
 
-ANS_DOCKER_CMD = docker run --rm \
+ANS_DOCKER_CMD = docker run --rm -it \
 	-v ~/.aws:/root/.aws:ro \
 	-v ~/.ssh:/root/.ssh:ro \
 	-v $(ANS_DIRECTORY):/ansible \
