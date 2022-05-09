@@ -12,6 +12,6 @@ ENC_DOCKER_CMD = docker run --rm \
 
 enc_encrypt enc_encrypt_%:
 	$(ENC_DOCKER_CMD) encrypt --key $(ENC_KMS_KEY) --input-dir /tmp/decrypted --output-dir /tmp/encrypted
-	
+
 enc_decrypt enc_decrypt_%:
 	$(ENC_DOCKER_CMD) decrypt --key $(ENC_KMS_KEY) --input-dir /tmp/encrypted --output-dir /tmp/decrypted
