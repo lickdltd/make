@@ -60,6 +60,7 @@ init: MAKE_FILES = ansible common
 ## further reading
 
 * [ansible](./docs/ansible.md)
+* [aws](./docs/aws.md)
 * [common](./docs/common.md)
 * [docker](./docs/docker.md)
 * [encryption](./docs/encryption.md)

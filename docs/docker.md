@@ -16,10 +16,11 @@
 ### variables
 
 ```makefile
-export DOCKER_IMAGE_URL = 843827012977.dkr.ecr.eu-west-1.amazonaws.com/$(NAME)
+export DOCKER_IMAGE_URL = $(AWS_ECR_DOMAIN)/$(NAME)
 export DOCKER_TAG = $(GIT_TAG)
 ```
 
+The variable `$(AWS_ECR_DOMAIN)` comes from [aws.mk](../aws.mk) and documented in [aws.md](./aws.md).
 The variable `$(GIT_TAG)` comes from [common.mk](../common.mk) and documented in [common.md](./common.md).
 
 ### docker compose file
