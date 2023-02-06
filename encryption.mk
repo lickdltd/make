@@ -4,7 +4,12 @@ ENC_VERSION ?= latest
 ENC_DIRECTORY_DECRYPTED ?= $(PWD)/decrypted
 ENC_DIRECTORY_ENCRYPTED ?= $(PWD)/encrypted
 
+ifndef AWS_REGION
+$(error AWS_REGION is not defined)
+endif
+
 ENC_DOCKER_CMD = docker run --rm \
+	-e AWS_REGION=$(AWS_REGION) \
 	-v ~/.aws:/root/.aws:ro \
 	-v $(ENC_DIRECTORY_DECRYPTED):/tmp/decrypted \
 	-v $(ENC_DIRECTORY_ENCRYPTED):/tmp/encrypted \
