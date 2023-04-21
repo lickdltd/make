@@ -15,8 +15,14 @@ ENC_DOCKER_CMD = docker run --rm \
 	-v $(ENC_DIRECTORY_ENCRYPTED):/tmp/encrypted \
 	ghcr.io/lickdltd/kms:$(ENC_VERSION)
 
-enc_encrypt enc_encrypt_%:
-	$(ENC_DOCKER_CMD) encrypt --key $(ENC_KMS_KEY) --input-dir /tmp/decrypted --output-dir /tmp/encrypted
+ENC_ENCRYPT_CMD = $(ENC_DOCKER_CMD) encrypt --key $(ENC_KMS_KEY) --input-dir /tmp/decrypted --output-dir /tmp/encrypted
+enc_encrypt:
+	$(ENC_ENCRYPT_CMD)
+enc_encrypt_%:
+	$(ENC_ENCRYPT_CMD)
 
-enc_decrypt enc_decrypt_%:
-	$(ENC_DOCKER_CMD) decrypt --key $(ENC_KMS_KEY) --input-dir /tmp/encrypted --output-dir /tmp/decrypted
+ENC_DECRYPT_CMD = $(ENC_DOCKER_CMD) decrypt --key $(ENC_KMS_KEY) --input-dir /tmp/encrypted --output-dir /tmp/decrypted
+enc_decrypt:
+	$(ENC_DECRYPT_CMD)
+enc_decrypt_%:
+	$(ENC_DECRYPT_CMD)

@@ -9,8 +9,12 @@ ANS_DOCKER_CMD = docker run --rm -it \
 	-v $(ANS_DIRECTORY):/ansible \
 	$(ANS_DOCKER_ADDITIONAL) ghcr.io/lickdltd/ansible:$(ANS_VERSION)
 
+ANS_GALAXY_INSTALL_CMD = $(ANS_DOCKER_CMD) ansible-galaxy install -r requirements.yaml
 ans_galaxy_install:
-	$(ANS_DOCKER_CMD) ansible-galaxy install -r requirements.yaml
+	$(ANS_GALAXY_INSTALL_CMD)
 
-ans_playbook ans_playbook_%:
-	$(ANS_DOCKER_CMD) ansible-playbook $(PLAYBOOK)
+ANS_PLAYBOOK_CMD = $(ANS_DOCKER_CMD) ansible-playbook $(PLAYBOOK)
+ans_playbook:
+	$(ANS_PLAYBOOK_CMD)
+ans_playbook_%:
+	$(ANS_PLAYBOOK_CMD)
