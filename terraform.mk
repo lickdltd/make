@@ -88,9 +88,9 @@ tf_import_%:
 
 TF_STATE_LIST_CMD = $(TF_DOCKER_CMD) state list
 tf_state_list:
-	$(TF_STATE_LIST_CMD) state list
+	$(TF_STATE_LIST_CMD)
 tf_state_list_%:
-	$(TF_STATE_LIST_CMD) state list
+	$(TF_STATE_LIST_CMD)
 
 TF_STATE_MV_CMD = $(TF_DOCKER_CMD) state mv '$(SOURCE)' '$(DESTINATION)'
 tf_state_mv:
