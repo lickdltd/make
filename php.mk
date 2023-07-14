@@ -1,6 +1,6 @@
 # php
 
-php_composer_%: CONTAINER = cli
+php_composer_%: CONTAINER ?= cli
 php_composer_%: DKR_COMPOSE_ADDITIONAL_RUN = --no-deps
 
 php_composer_install: COMMAND = composer install $(PACKAGE)

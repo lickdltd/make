@@ -1,6 +1,6 @@
 # python
 
-python_pip_%: CONTAINER = python
+python_pip_%: CONTAINER ?= python
 python_pip_%: DKR_COMPOSE_ADDITIONAL_RUN = --no-deps
 
 python_pip_install: COMMAND = pip install -r requirements.txt

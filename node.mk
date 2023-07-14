@@ -1,6 +1,6 @@
 # node
 
-node_npm_%: CONTAINER = node
+node_npm_%: CONTAINER ?= node
 node_npm_%: DKR_COMPOSE_ADDITIONAL_RUN = --no-deps
 
 node_npm_install: COMMAND = npm install $(PACKAGE)
