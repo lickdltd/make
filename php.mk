@@ -14,6 +14,6 @@ php_composer_update:
 php_tests_%:
 	$(DKR_COMPOSE_CMD_UP) || { $(DKR_COMPOSE_CMD_DOWN); exit 1; }
 
-php_cmd_%: CONTAINER = cli
+php_cmd_%: CONTAINER ?= cli
 php_cmd_%:
 	$(DKR_COMPOSE_CMD_RUN) || { $(DKR_COMPOSE_CMD_DOWN); exit 1; }
