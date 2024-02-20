@@ -5,6 +5,9 @@ AWS_REGION ?= eu-west-1
 
 AWS_ECR_DOMAIN ?= $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 
+aws_sso_validate:
+	@aws sts get-caller-identity &> /dev/null || { echo "aws login required, run 'make aws_sso_login' and try again"; exit 1; }
+
 aws_sso_login:
 	aws sso login
 
