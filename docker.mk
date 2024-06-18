@@ -13,7 +13,7 @@ dkr_pull:
 dkr_pull_%:
 	$(DKR_COMPOSE_CMD_PULL)
 
-DKR_BUILDX_BAKE_CMD = docker buildx bake
+DKR_BUILDX_BAKE_CMD = docker buildx bake --provenance=false
 DKR_COMPOSE_CMD_BUILD = $(DKR_COMPOSE_CMD) build --force-rm --pull $(DKR_COMPOSE_ADDITIONAL)$(DKR_COMPOSE_ADDITIONAL_BUILD)
 ifneq ($(shell docker buildx version),)
 	DKR_BUILD_CMD = $(DKR_BUILDX_BAKE_CMD)
