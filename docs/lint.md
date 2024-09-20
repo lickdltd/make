@@ -31,3 +31,11 @@ make lint
 LINT_REGEX_INCLUDE=path/to/your/directory make lint
 LINT_REGEX_INCLUDE=path/to/your/file make lint
 ```
+
+### prettier
+
+```shell
+make lint_prettier
+LINT_REGEX_INCLUDE=path/to/your/directory make lint_prettier
+LINT_REGEX_INCLUDE=path/to/your/file make lint_prettier
+```

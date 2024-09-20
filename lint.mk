@@ -4,6 +4,8 @@ LINT_VERSION ?= v4
 LINT_DIRECTORY ?= $(PWD)
 LINT_REGEX_INCLUDE ?= all
 
+LINT_PRETTIER_FILE ?= .
+
 LINT_CMD = docker run --rm \
 	-e RUN_LOCAL=true \
 	-e IGNORE_GITIGNORED_FILES=true \
@@ -20,3 +22,6 @@ LINT_CMD = docker run --rm \
 
 lint:
 	$(LINT_CMD)
+
+lint_prettier:
+	docker run -w /tmp/prettier -v $(PWD):/tmp/prettier node:20-alpine npx prettier --write $(LINT_PRETTIER_FILE)
