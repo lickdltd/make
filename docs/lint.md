@@ -36,6 +36,5 @@ LINT_REGEX_INCLUDE=path/to/your/file make lint
 
 ```shell
 make lint_prettier
-LINT_REGEX_INCLUDE=path/to/your/directory make lint_prettier
-LINT_REGEX_INCLUDE=path/to/your/file make lint_prettier
+LINT_PRETTIER_FILE=path/to/your/file make lint_prettier
 ```
