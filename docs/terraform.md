@@ -12,6 +12,7 @@
   * [destroy](#destroy)
   * [fmt](#fmt)
   * [import](#import)
+  * [taint](#taint)
   * [state](#state) - list, mv, rm
   * [workspace](#workspace) - delete, list, new, select, show
 
@@ -139,6 +140,13 @@ make tf_fmt_environment
 ```shell
 ADDRESS='terraform.target' ID='resource-id' make tf_import
 ADDRESS='terraform.target' ID='resource-id' make tf_import_environment
+```
+
+### taint
+
+```shell
+ADDRESS='terraform.target' make tf_taint
+ADDRESS='terraform.target' make tf_taint_environment
 ```
 
 ### state

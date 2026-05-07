@@ -86,6 +86,12 @@ tf_import:
 tf_import_%:
 	$(TF_IMPORT_CMD)
 
+TF_TAINT_CMD = $(TF_DOCKER_CMD) taint '$(ADDRESS)'
+tf_taint:
+	$(TF_TAINT_CMD)
+tf_taint_%:
+	$(TF_TAINT_CMD)
+
 TF_STATE_LIST_CMD = $(TF_DOCKER_CMD) state list
 tf_state_list:
 	$(TF_STATE_LIST_CMD)
