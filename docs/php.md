@@ -74,9 +74,10 @@ How it works:
   [docker.md](./docker.md#source-path)) rather than the main checkout.
 * **services** — the container runs with `--no-deps`, reusing the services you already
   have `up` instead of starting a duplicate stack, so bring the main stack up first.
-* **database isolation** — the run is given `DB_DATABASE=test_<worktree>` (override with
-  `DB_DATABASE=...`). The shared MySQL server is reused; only the schema differs. Ensure
-  your test bootstrap creates and migrates it (e.g. Laravel's `RefreshDatabase`).
+* **database isolation** — the run is given a unique, sanitised `DB_DATABASE` derived from
+  the worktree path (override with `DB_DATABASE=...`). The shared MySQL server is reused;
+  only the schema differs. Ensure your test bootstrap creates and migrates it (e.g.
+  Laravel's `RefreshDatabase`).
 * **composer drift** — if the worktree's `composer.lock` differs from the main
   checkout's (or its `vendor/` is missing) dependencies are installed for the worktree
   first, otherwise the existing `vendor/` is reused.

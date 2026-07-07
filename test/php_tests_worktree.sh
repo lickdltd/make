@@ -8,7 +8,7 @@
 set -eu
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-worktree=/tmp/claude-wt-test
+worktree=/tmp/wt-fixture-test
 
 if ! rendered=$(make -n \
 	-f "$repo_root/docker.mk" \
@@ -46,8 +46,8 @@ refute() { # description, fixed-string
 # AC1 — runs against the specified worktree's code, and runs the suite
 expect "mounts the worktree source"          "$worktree"
 expect "runs the selected test suite"        "vendor/bin/phpunit"
-# AC2 — per-worktree database isolation (name derived + hyphen-sanitised)
-expect "isolates the database per worktree"  "DB_DATABASE=test_claude_wt_test"
+# AC2 — per-worktree database isolation (sanitised basename + hash of full path)
+expect "isolates the database per worktree"  "DB_DATABASE=test_wt_fixture_test_3943437479"
 # AC3 — reuses the already-running services, no duplicate full stack
 expect "reuses running services (--no-deps)" "--no-deps"
 refute "does not start a full stack (up)"    "up --abort-on-container-exit"

@@ -27,14 +27,17 @@ php_tests_worktree: WORKTREE ?= $(PWD)
 php_tests_worktree: WORKTREE_SRC = $(abspath $(WORKTREE))
 php_tests_worktree: WORKTREE_ID = $(notdir $(WORKTREE_SRC))
 php_tests_worktree: DKR_COMPOSE_SRC = $(WORKTREE_SRC)
-php_tests_worktree: DB_DATABASE ?= test_$(subst -,_,$(WORKTREE_ID))
+# db name: sanitised worktree basename plus a hash of the full path, so two
+# worktrees that share a basename under different parents don't collide and odd
+# characters (dots, slashes) can't produce an invalid identifier.
+php_tests_worktree: DB_DATABASE ?= $(shell printf 'test_%s_%s' "$$(printf '%s' '$(WORKTREE_ID)' | tr -c 'A-Za-z0-9' '_')" "$$(printf '%s' '$(WORKTREE_SRC)' | cksum | cut -d' ' -f1)")
 php_tests_worktree: TESTS ?= phpunit
 php_tests_worktree: COMMAND ?= vendor/bin/$(TESTS)
 php_tests_worktree: DKR_COMPOSE_ADDITIONAL_RUN = --no-deps --env DB_DATABASE=$(DB_DATABASE)
 php_tests_worktree:
 	@test -n "$(WORKTREE)" && test -d "$(WORKTREE_SRC)" || { echo "php_tests_worktree: WORKTREE '$(WORKTREE)' does not exist" >&2; exit 1; }
 	@echo "php_tests_worktree: running '$(COMMAND)' against $(WORKTREE_SRC) (db: $(DB_DATABASE))"
-	@if [ ! -d "$(WORKTREE_SRC)/vendor" ] || ! cmp -s "$(WORKTREE_SRC)/composer.lock" "$(PWD)/composer.lock"; then echo "php_tests_worktree: composer.lock drift detected - installing dependencies for '$(WORKTREE_ID)'"; $(DKR_COMPOSE_CMD) run --rm --no-deps $(CONTAINER) composer install; else echo "php_tests_worktree: composer.lock matches main checkout - reusing vendor"; fi
+	@if [ ! -d "$(WORKTREE_SRC)/vendor" ] || ! cmp -s "$(WORKTREE_SRC)/composer.lock" "$(PWD)/composer.lock"; then echo "php_tests_worktree: composer.lock drift detected - installing dependencies for '$(WORKTREE_ID)'"; $(DKR_COMPOSE_CMD) run --rm $(DKR_COMPOSE_ADDITIONAL)--no-deps $(CONTAINER) composer install; else echo "php_tests_worktree: composer.lock matches main checkout - reusing vendor"; fi
 	$(DKR_COMPOSE_CMD_RUN)
 
 php_cmd_%: CONTAINER ?= cli
