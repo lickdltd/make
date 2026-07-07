@@ -3,6 +3,7 @@
 * [setup](#setup)
     * [variables](#variables)
     * [docker compose file](#docker-compose-file)
+    * [source path](#source-path)
 * [commands](#commands)
     * [dkr_pull](#dkr_pull)
     * [dkr_build](#dkr_build)
@@ -28,6 +29,25 @@ The variable `$(GIT_TAG)` comes from [common.mk](../common.mk) and documented in
 ```makefile
 dkr_build: DKR_COMPOSE_FILE = -f ./docker-compose.build.yaml
 ```
+
+### source path
+
+`DKR_COMPOSE_SRC` is the path to the source tree bind-mounted into the containers.
+It defaults to `$(PWD)` (the main checkout) and is exported so `docker compose` can
+interpolate it inside your compose file:
+
+```yaml
+services:
+  cli:
+    # no `container_name:` — lets an isolated run coexist with the main stack
+    volumes:
+      - ${DKR_COMPOSE_SRC:-.}:/app
+```
+
+Referencing `${DKR_COMPOSE_SRC}` instead of a hardcoded path, and omitting
+`container_name`, is what lets [`php_tests_worktree`](./php.md#tests-against-a-worktree)
+run a git worktree's code against the already-running main-checkout services without
+conflicting with them.
 
 ## commands
 

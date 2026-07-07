@@ -8,6 +8,7 @@
     * [composer install](#composer-install)
     * [composer update](#composer-update)
     * [tests](#tests)
+    * [tests against a worktree](#tests-against-a-worktree)
 
 ## setup
 
@@ -49,3 +50,36 @@ make php_tests_phpunit
 ```shell
 make php_tests_behat
 ```
+
+### tests against a worktree
+
+Run the suite against a git worktree's code while reusing the already-running local
+services (MySQL / Redis / Elasticsearch), with per-worktree database isolation so
+parallel worktree runs don't collide with each other or the main checkout:
+
+```shell
+make php_tests_worktree WORKTREE=/path/to/worktree
+```
+
+Pick a suite, or run an arbitrary command, with `TESTS` / `COMMAND`:
+
+```shell
+make php_tests_worktree WORKTREE=/path/to/worktree TESTS=behat
+make php_tests_worktree WORKTREE=/path/to/worktree COMMAND="php artisan test"
+```
+
+How it works:
+
+* **source** — the worktree is bind-mounted via `DKR_COMPOSE_SRC` (see
+  [docker.md](./docker.md#source-path)) rather than the main checkout.
+* **services** — the container runs with `--no-deps`, reusing the services you already
+  have `up` instead of starting a duplicate stack, so bring the main stack up first.
+* **database isolation** — the run is given `DB_DATABASE=test_<worktree>` (override with
+  `DB_DATABASE=...`). The shared MySQL server is reused; only the schema differs. Ensure
+  your test bootstrap creates and migrates it (e.g. Laravel's `RefreshDatabase`).
+* **composer drift** — if the worktree's `composer.lock` differs from the main
+  checkout's (or its `vendor/` is missing) dependencies are installed for the worktree
+  first, otherwise the existing `vendor/` is reused.
+
+This requires your compose file to reference `${DKR_COMPOSE_SRC}` for the code volume and
+to avoid a hardcoded `container_name` — see [docker.md](./docker.md#source-path).

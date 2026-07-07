@@ -1,0 +1,15 @@
+---
+
+name: Test
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  make-helpers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: php_tests_worktree
+        run: ./test/php_tests_worktree.sh
