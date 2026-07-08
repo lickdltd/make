@@ -53,11 +53,17 @@ make php_tests_behat
 
 ### tests against a worktree
 
-Run the suite against a git worktree's code while reusing the already-running local
-services (MySQL / Redis / Elasticsearch), with per-worktree database isolation so
-parallel worktree runs don't collide with each other or the main checkout:
+Run the suite against a git [worktree's](https://git-scm.com/docs/git-worktree) code while
+reusing the already-running local stack (image, compose files, secrets, services), with a
+per-worktree database so parallel worktree runs never collide with each other or the main
+checkout.
+
+This needs **no changes in the consuming repo**. Bring the main stack up as usual and run
+this from the MAIN checkout, pointing at a worktree — decrypted env/secret files (which are
+gitignored and absent in a worktree) are still sourced from the main stack:
 
 ```shell
+make dkr_up_local                                   # once: the stack it reuses must be up
 make php_tests_worktree WORKTREE=/path/to/worktree
 ```
 
@@ -70,17 +76,18 @@ make php_tests_worktree WORKTREE=/path/to/worktree COMMAND="php artisan test"
 
 How it works:
 
-* **source** — the worktree is bind-mounted via `DKR_COMPOSE_SRC` (see
-  [docker.md](./docker.md#source-path)) rather than the main checkout.
-* **services** — the container runs with `--no-deps`, reusing the services you already
-  have `up` instead of starting a duplicate stack, so bring the main stack up first.
-* **database isolation** — the run is given a unique, sanitised `DB_DATABASE` derived from
-  the worktree path (override with `DB_DATABASE=...`). The shared MySQL server is reused;
-  only the schema differs. Ensure your test bootstrap creates and migrates it (e.g.
-  Laravel's `RefreshDatabase`).
-* **composer drift** — if the worktree's `composer.lock` differs from the main
-  checkout's (or its `vendor/` is missing) dependencies are installed for the worktree
-  first, otherwise the existing `vendor/` is reused.
-
-This requires your compose file to reference `${DKR_COMPOSE_SRC}` for the code volume and
-to avoid a hardcoded `container_name` — see [docker.md](./docker.md#source-path).
+* **stack reuse** — it finds the running `cli` container for the compose project and reuses
+  the exact compose files, image and services that created it (so it never rebuilds a stale
+  image, and secrets come from the main stack's `env_file`). Bring the stack up first.
+* **source** — only the code bind-mount is redirected to the worktree, via an auto-generated
+  ephemeral compose override — your compose files are not edited. The app directory
+  (the one holding `composer.json`) is auto-detected from the running mount; override with
+  `APP_DIR=<path relative to the repo root>` if detection can't find it.
+* **database isolation** — the run gets a unique, sanitised `DB_DATABASE` derived from the
+  worktree path (override with `DB_DATABASE=...`), reusing the shared MySQL server. The
+  database is created, granted to the app user, and **migrated** before the suite runs.
+  Add `DB_SEED=1` for suites whose feature tests need seeded reference data, or `DB_FRESH=1`
+  to drop and rebuild it for a clean slate.
+* **composer drift** — if the worktree's `composer.lock` differs from the main checkout's
+  (or its `vendor/` is missing) dependencies are installed into the worktree first;
+  otherwise the worktree's `vendor/` is reused, so re-runs are fast.
