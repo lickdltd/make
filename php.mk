@@ -62,7 +62,10 @@ image=$$(docker inspect "$$cli" --format '{{.Image}}')
 #    (so home mounts like ~/.composer or ~/.ssh can't be mistaken for the app).
 mounts=$$(docker inspect "$$cli" --format '{{range .Mounts}}{{if eq .Type "bind"}}{{.Source}}{{"\t"}}{{.Destination}}{{"\n"}}{{end}}{{end}}')
 if [ -n "$$APP_DIR" ]; then
-  app_host="$$MAIN/$$APP_DIR"
+  # normalise: drop a leading ./ and any trailing slashes so '.', 'x/' etc. still
+  # match the canonical Docker mount source.
+  ad=$${APP_DIR#./}; while [ "$${ad%/}" != "$$ad" ]; do ad=$${ad%/}; done
+  if [ -z "$$ad" ] || [ "$$ad" = . ]; then app_host="$$MAIN"; else app_host="$$MAIN/$$ad"; fi
   app_target=$$(printf '%s\n' "$$mounts" | awk -F"$$tab" -v s="$$app_host" '$$1==s{print $$2; exit}')
   [ -n "$$app_target" ] || die "APP_DIR='$$APP_DIR' is not bind-mounted into the running '$$CLI_SERVICE' container"
 else
@@ -117,7 +120,7 @@ if [ -n "$$dbc" ]; then
   [ -n "$$appuser" ] || appuser=root
   if [ "$$DB_FRESH" = 1 ] || [ "$$DB_FRESH" = true ]; then
     log "DB_FRESH set - dropping database '$$DB'"
-    docker exec -e ISO="$$DB" "$$dbc" sh -c 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" -e "DROP DATABASE IF EXISTS \`$$ISO\`"' >/dev/null 2>&1 || true
+    docker exec -e ISO="$$DB" "$$dbc" sh -c 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" -e "DROP DATABASE IF EXISTS \`$$ISO\`"' >/dev/null 2>&1 || die "could not drop database '$$DB' via '$$dbc'"
   fi
   log "ensuring isolated database '$$DB' exists and is granted to '$$appuser'"
   docker exec -e ISO="$$DB" -e APPUSER="$$appuser" "$$dbc" sh -c 'mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE IF NOT EXISTS \`$$ISO\`; GRANT ALL PRIVILEGES ON \`$$ISO\`.* TO \`$$APPUSER\`@\`%\`; FLUSH PRIVILEGES;"' >/dev/null 2>&1 || die "could not create/grant database '$$DB' via '$$dbc' (expects a standard mysql/mariadb image exposing MYSQL_ROOT_PASSWORD)"
