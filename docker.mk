@@ -5,13 +5,6 @@ NAME ?= default
 DKR_COMPOSE_FILE ?= -f $(PWD)/docker-compose.yaml
 DKR_COMPOSE_PROJECT = $(NAME)
 
-# path to the source tree bind-mounted into the containers; defaults to the main
-# checkout. override to run against a git worktree instead (see php_tests_worktree
-# in php.mk). exported so `docker compose` can interpolate ${DKR_COMPOSE_SRC} in
-# your compose file's volume definitions.
-DKR_COMPOSE_SRC ?= $(PWD)
-export DKR_COMPOSE_SRC
-
 ifneq ($(shell docker compose --version),)
 	DKR_COMPOSE_CMD = COMPOSE_PROFILES=$(DKR_COMPOSE_PROFILES) docker compose $(DKR_COMPOSE_FILE) -p $(DKR_COMPOSE_PROJECT)
 else
