@@ -69,6 +69,21 @@ echo "ssm_guard_production recipe:"; printf '%s\n' "$guard" | sed 's/^/  | /'; e
 expect "ssm_guard derives env from the stem"    "ENV='production'"                         "$guard"
 expect "ssm_guard runs the guard program"       'sh -eu -c "$SSM_GUARD"'                   "$guard"
 
+# --- 1b. derived-service render guard (regression) -----------------------------
+# When a consumer does NOT set SSM_SERVICE (the common case), it is derived via
+# $(shell ...) in SSM_REPO_NAME — and a malformed shell call there (e.g. a `#`
+# inside it, which GNU Make 3.81 mis-tokenises) aborts with "unterminated call to
+# function". The rest of this file always pins SSM_SERVICE, which short-circuits
+# that expansion, so render once WITHOUT it to exercise the derivation path.
+incdir=$(mktemp -d -t ssm_inc.XXXXXX)
+cp "$repo_root/ssm.mk" "$incdir/ssm.mk"
+printf -- '-include %s/ssm.mk\n' "$incdir" > "$incdir/Makefile"
+inc=$(make -C "$incdir" -n ssm_guard_test AWS_REGION=eu-west-1 2>&1 || true)
+rm -rf "$incdir"
+echo
+refute "SSM_REPO_NAME shell call is well-formed"  "unterminated call to function"       "$inc"
+expect "renders with a derived service prefix"    "/ecs/test/"                          "$inc"
+
 # --- 2. the exported shell programs --------------------------------------------
 
 helper=$(mktemp -t ssm_helper.XXXXXX)

@@ -10,7 +10,7 @@ SSM_ENV ?=
 # Service segment of the parameter path. Defaults to the repo name (git remote
 # basename, else the working-directory name) so every repo that inherits these
 # helpers targets its own path without configuration.
-SSM_REPO_NAME = $(shell git config --get remote.origin.url 2>/dev/null | sed -E 's#.*/##; s#\.git$$##')
+SSM_REPO_NAME = $(shell git config --get remote.origin.url 2>/dev/null | sed -E 's,.*/,,; s,\.git$$,,')
 SSM_SERVICE ?= $(if $(SSM_REPO_NAME),$(SSM_REPO_NAME),$(notdir $(CURDIR)))
 
 # Parameter path convention from RFC #356.1: /ecs/<env>/<service>/<KEY>.
