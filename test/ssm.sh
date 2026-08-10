@@ -72,7 +72,8 @@ expect "ssm_guard runs the guard program"       'sh -eu -c "$SSM_GUARD"'        
 # --- 2. the exported shell programs --------------------------------------------
 
 helper=$(mktemp -t ssm_helper.XXXXXX)
-trap 'rm -f "$helper"' EXIT INT TERM HUP
+leakdir=$(mktemp -d -t ssm_leak.XXXXXX)
+trap 'rm -f "$helper"; rm -rf "$leakdir"' EXIT INT TERM HUP
 
 printf '_sync:\n\t@printf %%s "$$SSM_SYNC"\n_guard:\n\t@printf %%s "$$SSM_GUARD"\n' > "$helper"
 sync_script=$($mk -s -f "$helper" _sync)
@@ -91,6 +92,24 @@ echo
 expect "guard decrypts to read the value"       "--with-decryption"                        "$guard_script"
 expect "guard compares against the placeholder" '"$value" = "$PLACEHOLDER"'                "$guard_script"
 expect "guard fails when a key is unresolved"   "exit 1"                                   "$guard_script"
+
+# Run the guard end-to-end against a fake `aws` that returns a canary secret, and
+# assert the decrypted value never reaches stdout/stderr — a future `echo "$value"`
+# leak would be caught here, not just by reading the source.
+mkdir "$leakdir/bin"
+canary='SECRET-CANARY-9d1f7a'
+cat > "$leakdir/bin/aws" <<EOF
+#!/bin/sh
+# fake \`aws ssm get-parameter\`: always resolves to a real (non-placeholder) value
+printf '%s\n' '$canary'
+EOF
+chmod +x "$leakdir/bin/aws"
+printf 'API_KEY\n' > "$leakdir/ssm.keys"
+guard_output=$(PATH="$leakdir/bin:$PATH" $mk ssm_guard_production SSM_KEYS_FILE="$leakdir/ssm.keys" 2>&1 || true)
+
+echo
+refute "guard never emits the decrypted value"  "$canary"                                  "$guard_output"
+expect "guard resolves a real (non-sentinel) value" "all keys resolved"                    "$guard_output"
 
 echo
 if [ "$failures" -ne 0 ]; then

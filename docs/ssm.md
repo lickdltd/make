@@ -9,6 +9,7 @@ seeded with a recognisable sentinel (`PENDING`) so they exist without holding a
 real value; a guard then fails CI if any referenced key still holds that sentinel.
 
 * [setup](#setup)
+  * [install](#install)
   * [environment](#environment)
   * [service override](#service-override)
   * [key-name list](#key-name-list)
@@ -19,6 +20,15 @@ real value; a guard then fails CI if any referenced key still holds that sentine
   * [ssm_guard](#ssm_guard)
 
 ## setup
+
+### install
+
+Opt into these helpers by adding `ssm` to your project's `MAKE_FILES` (see the
+[README](../README.md#includes)), so `ssm.mk` is downloaded alongside the rest:
+
+```makefile
+init: MAKE_FILES = common ssm
+```
 
 ### environment
 
@@ -56,7 +66,7 @@ project root:
 SSM_KEYS_FILE = $(PWD)/ssm.keys
 ```
 
-```
+```text
 # ssm.keys
 DATABASE_URL
 STRIPE_SECRET_KEY
