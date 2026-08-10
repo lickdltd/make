@@ -68,4 +68,5 @@ init: MAKE_FILES = ansible common
 * [node](./docs/node.md)
 * [php](./docs/php.md)
 * [python](./docs/python.md)
+* [ssm](./docs/ssm.md)
 * [terraform](./docs/terraform.md)

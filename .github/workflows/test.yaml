@@ -18,3 +18,5 @@ jobs:
           persist-credentials: false
       - name: php_tests_worktree
         run: ./test/php_tests_worktree.sh
+      - name: ssm
+        run: ./test/ssm.sh
